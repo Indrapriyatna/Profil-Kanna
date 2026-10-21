@@ -168,11 +168,14 @@ a.footer-social-link:hover,a.footer-social-link:focus-visible{transform:translat
 /* Warna hover sosial mengikuti tema sebelumnya. */
 a.profile-social-link,a.footer-social-link{cursor:pointer}
 
-/* Cegah kartu Informasi Pribadi melebar keluar dari bingkai pada layar ponsel. */
+/* Rapikan susunan profil dan jaga jarak bingkai tetap sama di layar ponsel. */
 @media(max-width:700px){
-    #about>.bg-white{max-width:100%;overflow:hidden}
-    #about>.bg-white>.grid{width:100%;min-width:0;grid-template-columns:minmax(0,1fr)}
-    #about>.bg-white>.grid>*{min-width:0;max-width:100%}
+    #about>.bg-white{width:100%;max-width:100%;padding:1.25rem!important;overflow:visible}
+    #about>.bg-white>.grid{display:flex;width:100%;min-width:0;flex-direction:column;gap:1.25rem!important}
+    #about>.bg-white>.grid>*{width:100%;min-width:0;max-width:100%}
+    #about>.bg-white>.grid>div:last-child{box-sizing:border-box;padding:1.25rem!important;border-radius:1.25rem}
+    #about #quick-facts{width:100%;padding-left:0}
+    #about #quick-facts li{display:grid;grid-template-columns:1.25rem minmax(0,1fr);column-gap:.75rem;align-items:start}
     #about #quick-facts li>span{min-width:0;overflow-wrap:anywhere}
     #about #quick-facts li a,#about #quick-facts li span span{overflow-wrap:anywhere;word-break:normal}
 }
