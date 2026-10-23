@@ -105,7 +105,7 @@ contactForm.addEventListener("submit", async (event) => {
         [contactFields.name, payload.name.length >= 2, "Nama minimal 2 karakter."],
         [contactFields.email, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email), "Masukkan alamat email yang valid."],
         [contactFields.subject, payload.subject.length >= 3, "Subjek minimal 3 karakter."],
-        [contactFields.message, payload.message.length >= 10, "Pesan minimal 10 karakter."]
+        [contactFields.message, payload.message.length >= 1, "Pesan tidak boleh kosong."]
     ];
     trimmedChecks.forEach(([field, isValid, message]) => field.setCustomValidity(isValid ? "" : message));
     const invalidField = contactForm.querySelector(":invalid");
