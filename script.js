@@ -63,9 +63,11 @@ function setNavOpen(open) { navList.classList.toggle("is-open", open); navToggle
 navToggle.addEventListener("click", () => setNavOpen(navToggle.getAttribute("aria-expanded") !== "true")); navList.addEventListener("click", event => { if (event.target.closest("a")) setNavOpen(false) }); window.addEventListener("resize", () => { if (window.innerWidth > 700) setNavOpen(false) });
 document.getElementById("nav-list").innerHTML = renderNav(navItems); document.getElementById("hero-buttons").innerHTML = renderHeroButtons(heroButtons); document.getElementById("quick-facts").innerHTML = renderQuickFacts(quickFacts); document.getElementById("skills-grid").innerHTML = renderSkills(skills); document.getElementById("projects-grid").innerHTML = renderFocusAreas(focusAreas); document.getElementById("contact-buttons").innerHTML = renderContactButtons(contactButtons); document.getElementById("current-year").textContent = new Date().getFullYear();
 document.addEventListener("click", event => { const anchor = event.target.closest('a[href^="#"]'); if (anchor && anchor.getAttribute("href") !== "#") { const target = document.querySelector(anchor.getAttribute("href")); if (target) { event.preventDefault(); target.scrollIntoView({ behavior: "smooth", block: "start" }) } } const button = event.target.closest("button[data-target]"); if (button) { const target = document.querySelector(button.dataset.target); if (target) target.scrollIntoView({ behavior: "smooth", block: "start" }) } });
-/* Formulir mengirim pesan ke email Kanna melalui endpoint FormSubmit. */
+/* Formulir mengirim pesan ke email Kanna melalui endpoint Web3Forms. */
 const contactForm = document.getElementById("contact-form");
 const contactStatus = document.getElementById("contact-form-status");
+const formSuccessScreen = document.getElementById("form-success-screen");
+const formSuccessBack = document.getElementById("form-success-back");
 function showContactStatus(message, state = "pending") {
     contactStatus.textContent = message;
     contactStatus.dataset.state = state;
@@ -91,11 +93,12 @@ contactForm.addEventListener("submit", async (event) => {
     const submitButton = contactForm.querySelector('button[type="submit"]');
     const formData = new FormData(contactForm);
     const payload = {
+        access_key: String(formData.get("access_key") || "").trim(),
         name: String(formData.get("name")).trim(),
         email: String(formData.get("email")).trim(),
         subject: String(formData.get("subject")).trim(),
         message: String(formData.get("message")).trim(),
-        _subject: "Pesan dari website profil Kanna"
+        from_name: "Website Profil Kanna"
     };
 
     const trimmedChecks = [
@@ -111,26 +114,37 @@ contactForm.addEventListener("submit", async (event) => {
         invalidField.reportValidity();
         return;
     }
+    if (!payload.access_key || payload.access_key === "YOUR_WEB3FORMS_ACCESS_KEY") {
+        showContactStatus("Formulir belum aktif. Access Key Web3Forms perlu dipasang terlebih dahulu.", "error");
+        return;
+    }
 
     submitButton.disabled = true;
-    showContactStatus("Pesan sedang dikirim...", "pending");
+    showContactStatus("Mengirim pesan...", "pending");
     try {
-        const response = await fetch("https://formsubmit.co/ajax/kannaprastiwii28@gmail.com", {
+        const response = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Accept": "application/json" },
             body: JSON.stringify(payload)
         });
         const result = await response.json();
-        if (!response.ok || result.success === false || result.success === "false") {
-            throw new Error(result.message || "Pesan belum berhasil dikirim.");
+        if (!response.ok || result.success !== true) {
+            throw new Error(result.message || result.body?.message || "Pesan belum berhasil dikirim.");
         }
-        showContactStatus("Pesan berhasil dikirim. Terima kasih sudah menghubungi saya!", "success");
         contactForm.reset();
+        document.body.classList.add("form-success-active");
+        formSuccessScreen.hidden = false;
+        document.getElementById("form-success-title").focus();
     } catch (error) {
-        showContactStatus("Pesan belum terkirim. Periksa koneksi internet lalu coba lagi.", "error");
+        showContactStatus(error.message || "Pesan belum terkirim. Periksa koneksi internet lalu coba lagi.", "error");
     } finally {
         submitButton.disabled = false;
     }
+});
+formSuccessBack.addEventListener("click", () => {
+    formSuccessScreen.hidden = true;
+    document.body.classList.remove("form-success-active");
+    document.getElementById("contact").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 // URL akun media sosial: isi URL akun Anda pada bagian yang masih kosong.
 const profileSocialUrls = {

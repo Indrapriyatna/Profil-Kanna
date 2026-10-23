@@ -24,7 +24,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=mobile-card-fix-3">
+    <link rel="stylesheet" href="style.css?v=web3forms-success-1">
 </head>
 
 <body class="text-gray-800">
@@ -113,7 +113,11 @@
             <div class="contact-panel">
                 <div class="contact-inner">
                     <h2 class="contact-title">Mari Berdiskusi dengan Saya</h2>
-                    <form id="contact-form" class="contact-form">
+                    <form id="contact-form" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                        <!-- Access Key Web3Forms yang terhubung ke email Kanna. -->
+                        <input type="hidden" name="access_key" value="2ad67725-7421-4a6b-8840-65eba5018494">
+                        <input type="checkbox" name="botcheck" class="hidden" style="display:none">
+                        <input type="hidden" name="subject" value="Pesan baru dari website Kanna">
                         <label class="sr-only" for="contact-name">Nama</label>
                         <input id="contact-name" name="name" type="text" placeholder="Nama" autocomplete="name"
                             minlength="2" maxlength="80" required>
@@ -133,6 +137,17 @@
             </div>
         </section>
     </main>
+    <section id="form-success-screen" class="form-success-screen" aria-labelledby="form-success-title" hidden>
+        <div class="form-success-content">
+            <div class="form-success-icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64"><path d="m15 33 12 12 23-27" /></svg>
+            </div>
+            <h1 id="form-success-title" tabindex="-1">Pesan berhasil dikirim!</h1>
+            <p>Terima kasih telah menghubungi Kanna.<br>Saya akan membalas pesan Anda secepatnya.</p>
+            <button class="form-success-back" id="form-success-back" type="button">Kembali ke profil</button>
+        </div>
+        <p class="form-success-credit">Formulir dikirim dengan Web3Forms</p>
+    </section>
     <footer class="bg-gray-900 text-gray-300 py-8">
         <div class="max-w-6xl mx-auto px-4 md:px-8">
             <div class="flex flex-col items-center justify-center gap-2">
@@ -167,7 +182,7 @@
             </div>
         </div>
     </footer>
-    <script src="script.js?v=send-notice-1" defer></script>
+    <script src="script.js?v=web3forms-success-1" defer></script>
 </body>
 
 </html>
