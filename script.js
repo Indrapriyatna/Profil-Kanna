@@ -65,9 +65,24 @@ document.getElementById("nav-list").innerHTML = renderNav(navItems); document.ge
 document.addEventListener("click", event => { const anchor = event.target.closest('a[href^="#"]'); if (anchor && anchor.getAttribute("href") !== "#") { const target = document.querySelector(anchor.getAttribute("href")); if (target) { event.preventDefault(); target.scrollIntoView({ behavior: "smooth", block: "start" }) } } const button = event.target.closest("button[data-target]"); if (button) { const target = document.querySelector(button.dataset.target); if (target) target.scrollIntoView({ behavior: "smooth", block: "start" }) } });
 /* Formulir mengirim pesan ke email Kanna melalui endpoint FormSubmit. */
 const contactForm = document.getElementById("contact-form");
+const contactStatus = document.getElementById("contact-form-status");
+const contactFields = {
+    name: document.getElementById("contact-name"),
+    email: document.getElementById("contact-email"),
+    subject: document.getElementById("contact-subject"),
+    message: document.getElementById("contact-message")
+};
+contactForm.addEventListener("invalid", () => {
+    contactStatus.textContent = "Mohon periksa kembali nama, email, subjek, dan pesan sebelum mengirim.";
+}, true);
+Object.values(contactFields).forEach((field) => {
+    field.addEventListener("input", () => {
+        field.setCustomValidity("");
+        if (contactForm.checkValidity()) contactStatus.textContent = "";
+    });
+});
 contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formStatus = document.getElementById("contact-form-status");
     const submitButton = contactForm.querySelector('button[type="submit"]');
     const formData = new FormData(contactForm);
     const payload = {
@@ -78,8 +93,22 @@ contactForm.addEventListener("submit", async (event) => {
         _subject: "Pesan dari website profil Kanna"
     };
 
+    const trimmedChecks = [
+        [contactFields.name, payload.name.length >= 2, "Nama minimal 2 karakter."],
+        [contactFields.email, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email), "Masukkan alamat email yang valid."],
+        [contactFields.subject, payload.subject.length >= 3, "Subjek minimal 3 karakter."],
+        [contactFields.message, payload.message.length >= 10, "Pesan minimal 10 karakter."]
+    ];
+    trimmedChecks.forEach(([field, isValid, message]) => field.setCustomValidity(isValid ? "" : message));
+    const invalidField = contactForm.querySelector(":invalid");
+    if (invalidField) {
+        contactStatus.textContent = invalidField.validationMessage;
+        invalidField.reportValidity();
+        return;
+    }
+
     submitButton.disabled = true;
-    formStatus.textContent = "Mengirim pesan...";
+    contactStatus.textContent = "Mengirim pesan...";
     try {
         const response = await fetch("https://formsubmit.co/ajax/kannaprastiwii28@gmail.com", {
             method: "POST",
@@ -90,10 +119,10 @@ contactForm.addEventListener("submit", async (event) => {
         if (!response.ok || result.success === false) {
             throw new Error(result.message || "Pesan belum berhasil dikirim.");
         }
-        formStatus.textContent = "Pesan berhasil dikirim. Terima kasih sudah menghubungi saya!";
+        contactStatus.textContent = "Pesan berhasil dikirim. Terima kasih sudah menghubungi saya!";
         contactForm.reset();
     } catch (error) {
-        formStatus.textContent = "Pesan belum terkirim. Periksa koneksi internet lalu coba lagi.";
+        contactStatus.textContent = "Pesan belum terkirim. Periksa koneksi internet lalu coba lagi.";
     } finally {
         submitButton.disabled = false;
     }

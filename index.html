@@ -116,15 +116,16 @@
                     <form id="contact-form" class="contact-form">
                         <label class="sr-only" for="contact-name">Nama</label>
                         <input id="contact-name" name="name" type="text" placeholder="Nama" autocomplete="name"
-                            required>
+                            minlength="2" maxlength="80" required>
                         <label class="sr-only" for="contact-email">E-mail</label>
                         <input id="contact-email" name="email" type="email" placeholder="E-mail" autocomplete="email"
                             required>
                         <label class="sr-only" for="contact-subject">Subjek</label>
-                        <input id="contact-subject" name="subject" type="text" placeholder="Subjek" required>
+                        <input id="contact-subject" name="subject" type="text" placeholder="Subjek"
+                            minlength="3" maxlength="120" required>
                         <label class="sr-only" for="contact-message">Pesan</label>
                         <textarea id="contact-message" name="message" placeholder="Ketik pesan Anda di sini..."
-                            required></textarea>
+                            minlength="10" maxlength="3000" required></textarea>
                         <button class="contact-submit" type="submit">Kirim</button>
                         <p id="contact-form-status" class="contact-form-status" aria-live="polite"></p>
                     </form>
@@ -166,7 +167,7 @@
             </div>
         </div>
     </footer>
-    <script src="script.js" defer></script>
+    <script src="script.js?v=validation-1" defer></script>
 </body>
 
 </html>
