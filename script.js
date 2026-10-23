@@ -66,6 +66,11 @@ document.addEventListener("click", event => { const anchor = event.target.closes
 /* Formulir mengirim pesan ke email Kanna melalui endpoint FormSubmit. */
 const contactForm = document.getElementById("contact-form");
 const contactStatus = document.getElementById("contact-form-status");
+function showContactStatus(message, state = "pending") {
+    contactStatus.textContent = message;
+    contactStatus.dataset.state = state;
+    contactStatus.hidden = !message;
+}
 const contactFields = {
     name: document.getElementById("contact-name"),
     email: document.getElementById("contact-email"),
@@ -73,12 +78,12 @@ const contactFields = {
     message: document.getElementById("contact-message")
 };
 contactForm.addEventListener("invalid", () => {
-    contactStatus.textContent = "Mohon periksa kembali nama, email, subjek, dan pesan sebelum mengirim.";
+    showContactStatus("Mohon periksa kembali nama, email, subjek, dan pesan sebelum mengirim.", "error");
 }, true);
 Object.values(contactFields).forEach((field) => {
     field.addEventListener("input", () => {
         field.setCustomValidity("");
-        if (contactForm.checkValidity()) contactStatus.textContent = "";
+        if (contactForm.checkValidity()) showContactStatus("");
     });
 });
 contactForm.addEventListener("submit", async (event) => {
@@ -102,13 +107,13 @@ contactForm.addEventListener("submit", async (event) => {
     trimmedChecks.forEach(([field, isValid, message]) => field.setCustomValidity(isValid ? "" : message));
     const invalidField = contactForm.querySelector(":invalid");
     if (invalidField) {
-        contactStatus.textContent = invalidField.validationMessage;
+        showContactStatus(invalidField.validationMessage, "error");
         invalidField.reportValidity();
         return;
     }
 
     submitButton.disabled = true;
-    contactStatus.textContent = "Mengirim pesan...";
+    showContactStatus("Pesan sedang dikirim...", "pending");
     try {
         const response = await fetch("https://formsubmit.co/ajax/kannaprastiwii28@gmail.com", {
             method: "POST",
@@ -116,13 +121,13 @@ contactForm.addEventListener("submit", async (event) => {
             body: JSON.stringify(payload)
         });
         const result = await response.json();
-        if (!response.ok || result.success === false) {
+        if (!response.ok || result.success === false || result.success === "false") {
             throw new Error(result.message || "Pesan belum berhasil dikirim.");
         }
-        contactStatus.textContent = "Pesan berhasil dikirim. Terima kasih sudah menghubungi saya!";
+        showContactStatus("Pesan berhasil dikirim. Terima kasih sudah menghubungi saya!", "success");
         contactForm.reset();
     } catch (error) {
-        contactStatus.textContent = "Pesan belum terkirim. Periksa koneksi internet lalu coba lagi.";
+        showContactStatus("Pesan belum terkirim. Periksa koneksi internet lalu coba lagi.", "error");
     } finally {
         submitButton.disabled = false;
     }

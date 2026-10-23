@@ -75,6 +75,11 @@ body{background:radial-gradient(ellipse at 12% 8%,rgba(99,102,241,.15),transpare
 .contact-panel{background:linear-gradient(120deg,#f0edff,#e8e3ff);color:#29234a;box-shadow:0 18px 48px rgba(79,70,170,.12)}
 .contact-title{color:#29234a}
 .contact-form-status{color:#514a70}
+.contact-form-status[hidden]{display:none}
+.contact-form-status:not([hidden]){display:block;width:100%;box-sizing:border-box;padding:12px 16px;border:1px solid transparent;border-radius:12px;text-align:center;font-size:.95rem;font-weight:600;line-height:1.5}
+.contact-form-status[data-state="success"]{background:#e8f7ef;border-color:#bce7ce;color:#176b3a}
+.contact-form-status[data-state="error"]{background:#fff0f0;border-color:#f2c4c4;color:#a12626}
+.contact-form-status[data-state="pending"]{background:rgba(255,255,255,.72);border-color:rgba(99,102,241,.2);color:#5140bf}
 .contact-submit{background:#6755d8;color:#fff}
 .contact-submit:hover{background:#5140bf;color:#fff}
 
